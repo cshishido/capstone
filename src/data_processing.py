@@ -40,7 +40,7 @@ def identify_ingred(ingred_line, precedence_dict, from_url="unknow_url", verbose
 
 def get_recipe_features(recipe_dict, precedence_dict):
     tot = recipe_dict['totalWeight']
-    features = defaultdict(float,
+    features = defaultdict( float,
                 {'label': recipe_dict['label'].lower(),
                 'total_wgt': tot,
                 'url': recipe_dict['url']})
