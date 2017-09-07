@@ -42,13 +42,15 @@ def populate_db(search_list, collection):
         if n_items == 0:
             print "no hits for search_term{}".format(search_term)
         for hit in hits:
+            recipe = hit['recipe']
+            recipe['search_term'] = search_term
             collection.insert_one(hit['recipe'])
         #update log and print status
         message = "inserted {} items for search term '{}' to {}".format(
             n_items,
             search_term,
             collection.full_name)
-        with open('cookie_db.log', 'a') as log_f:
+        with open('edama_queries.log', 'a') as log_f:
             log_f.write(ts + ": " + message + "\n")
         print message
         if i < last_i:

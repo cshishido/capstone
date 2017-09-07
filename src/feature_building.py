@@ -81,13 +81,15 @@ def count_keyword_ngrams(cursor, n, ngram_counts=None):
             , n))
     return ngram_counts
 
-def count_keyword_1and2grams(cursor):
+def count_keyword_123grams(cursor):
     n1gram_counts = Counter()
     n2gram_counts = Counter()
+    n3gram_counts = Counter()
     for doc in cursor:
         lines = doc['ingredients']
         for line in lines:
             tokens = token_pipeline(line['text'])
             n1gram_counts.update(tokens)
             n2gram_counts.update(ngrams(tokens, 2))
-    return n1gram_counts, n2gram_counts
+            n3gram_counts.update(ngrams(tokens, 3))
+    return n1gram_counts, n2gram_counts, n3gram_counts
