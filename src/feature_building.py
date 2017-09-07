@@ -6,32 +6,6 @@ from nltk.util import ngrams
 from nltk.stem import RegexpStemmer
 from nltk.stem.snowball import SnowballStemmer
 
-# stopwords = {
-# 'tbsp',
-# 'tablespoon',
-# 'tsp',
-# 'teaspoon',
-# 'cup',
-# 'ounce',
-# 'oz',
-# 'gram',
-# 'g',
-# 'ground',
-# 'large',
-# 'at',
-# 'chopped',
-# 'room',
-# 'temperature',
-# 'hot',
-# 'cold',
-# 'softened',
-# 'packed',
-# '',
-# 'of',
-# 'a',
-# 'about'
-# 'for',
-# }
 
 with open("stopwords.txt", "r") as f:
     stopwords = {word.strip() for word in f}
