@@ -3,6 +3,7 @@ from feature_building import count_keyword_123grams, token_pipeline
 from nltk.util import ngrams
 from collections import defaultdict
 import pandas as pd
+from warnings import warn
 
 def keyword_hierarchy(curs, dir_path):
     precedence = {}
@@ -59,4 +60,20 @@ def get_recipe_df(coll, regx, dir_path='src/'):
     precedence = keyword_hierarchy(coll.find({'label': regx}), dir_path)
     return pd.DataFrame([get_recipe_features(doc, precedence)
                         for doc in coll.find({'label': regx})]
-                    ).set_index('url')
+                        ).set_index('url').fillna(0)
+
+def mean_scale_recipes(df):
+    """
+    scales each ingred percent mass by dividing by mean of nonzero values
+    drop label and total_wgt for compatibility with pair-wise dists compuation
+    """
+    try:
+        df = df.drop(['label', 'total_wgt'], axis=1)
+    except ValueError:
+        warn("label and total_wgt columns are not in df")
+    return df/(df.sum(axis=0)/(df>0).sum(axis=0))
+
+
+def drop_uncommon_ingreds(df, thresh=10):
+    common_ingred_cols = df.columns[(df > 0).sum(axis=0) > thresh]
+    return df[common_ingred_cols]
