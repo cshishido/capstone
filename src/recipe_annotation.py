@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from recipe_distance import pair_dist_composite
 
 class Recipe(object):
 
@@ -13,12 +14,12 @@ class Recipe(object):
     def __repr__(self):
         return "Recipe({})".format(self.label)
 
-    def add_to_group(self, group):
-        self.group = group
-        self.group.members.add(self.key)
-        self.group.get_stats()
+    # def add_to_group(self, group):
+    #     self.group = group
+    #     self.group.member_keys.add(self.key)
+    #     self.group.get_stats()
 
-    def get_annotations(self):
+    def _get_annotations(self):
         """
         creates self.annots atribute, joinable lines of recipe ingreds
         """
@@ -42,19 +43,28 @@ class Recipe(object):
             lines.append("-"*60)
         self.annots = "\n".join(lines)
 
+    def __str__(self):
+        self._get_annotations()
+        return self.annots
+
 class RecipeGroup(object):
 
-    def __init__(self, member_keys, df):
+    def __init__(self, df, member_keys=set()):
         #assuming a DataFrame of %mass by ingred, plus label and total_wgt
         #member_keys are df indices of recipes in group
-        self.member_keys = member_keys
+        self.member_keys = set(member_keys)
         self.df = df
         self.create_members()
-        self.get_stats()
+        self.dists = None
+
+    def get_dists(self, ratio):
+        if self.dists == None:
+            self.dists = pair_dist_composite(self.df)
 
     def create_members(self):
         self.members = {key: Recipe(self.df.loc[key].to_dict(),key, self)
             for key in self.member_keys}
+        self.get_stats()
 
     def get_stats(self):
         group_df = self.df.drop(["label", "total_wgt"], axis=1).loc[list(self.member_keys)]
@@ -65,11 +75,24 @@ class RecipeGroup(object):
         for ingred in group_df.columns:
             uses = group_df[ingred] > 0
             amounts = group_df[ingred][uses]
-            # ingred_min, ingred_max = amounts.min(), amounts.max()
-            # ingred_mean, ingred_var = amounts.mean(), amounts.var()
             self.stats[ingred] = {'freq': uses.mean(),
                                   'min': amounts.min(),
                                   'max': amounts.max(),
                                   'avg': amounts.mean(),
                                   'var': np.var(np.array(amounts), dtype=np.float64),
                                   'std': np.var(np.array(amounts), dtype=np.float64)}
+
+    def grow_from_center(self, center_recp_key, group_size, **kwargs):
+        self.member_keys.add(center_recp_key)
+        self.get_dists(kwargs.get('ratio',0.5))
+        # find row in dist matrix corresponding to centeral key
+        neighbors_d = self.dists[np.where(self.df.index == center_recp_key)].squeeze()
+        print neighbors_d.shape
+        # add keys of nearest neighbors to member_keys set
+        self.member_keys.update(self.df.index[neighbors_d.argsort()[0:group_size]])
+        self.create_members()
+
+
+    def grow_by_linkage(group_size):
+        while len(member_keys) > group_size:
+            
