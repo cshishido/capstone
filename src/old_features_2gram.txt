@@ -1,4 +1,4 @@
-vanilla extract
+    vanilla extract
 bake soda
 brown sugar
 bake powder
@@ -13,9 +13,12 @@ confection sugar
 peanut butter
 cocoa powder
 egg yolk
+semisweet chocol
 powder sugar
 whole wheat
+bittersweet chocol
 egg white
+dark chocol
 white chocol
 lemon juic
 cream chees
@@ -27,6 +30,7 @@ heavi cream
 rice flour
 orang zest
 macadamia nut
+milk chocol
 canola oil
 mapl syrup
 veget oil

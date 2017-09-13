@@ -44,23 +44,28 @@ def get_recipe_features(recipe_dict, precedence_dict):
     features = defaultdict( float,
                 {'label': recipe_dict['label'].lower(),
                 'total_wgt': tot,
-                'url': recipe_dict['url']})
+                'url': recipe_dict['url'],
+                'health': recipe_dict['healthLabels']
+                'line_text': '\n'.join(recipe_dict['ingredientLines'])})
     for ingred_line in recipe_dict['ingredients']:
         ingred = identify_ingred(ingred_line, precedence_dict, from_url=recipe_dict['url'])
         if ingred:
             features[ingred[0]] += ingred[1]/tot
     return features
 
-def get_recipe_df(coll, regx, dir_path='src/'):
+def get_recipe_df(coll, regx, dir_path='src/', drop_thresh=5):
     '''
     takes a pymongo collection handle and a compiled regular expression ands returns
     a featurized pandas DataFrame of all recipes in coll matching regx, percent mass
     by ingredient
     '''
     precedence = keyword_hierarchy(coll.find({'label': regx}), dir_path)
-    return pd.DataFrame([get_recipe_features(doc, precedence)
+    df = pd.DataFrame([get_recipe_features(doc, precedence)
                         for doc in coll.find({'label': regx})]
                         ).set_index('url').fillna(0)
+    if drop_thresh:
+        df = drop_uncommon_ingreds(df, thresh=drop_thresh)
+    return df
 
 def mean_scale_recipes(df):
     """
@@ -68,7 +73,7 @@ def mean_scale_recipes(df):
     drop label and total_wgt for compatibility with pair-wise dists compuation
     """
     try:
-        df = df.drop(['label', 'total_wgt'], axis=1)
+        df = df.drop(['label', 'total_wgt', 'line_text', 'healthLabels'], axis=1)
     except ValueError:
         warn("label and total_wgt columns are not in df")
     return df/(df.sum(axis=0)/(df>0).sum(axis=0))
