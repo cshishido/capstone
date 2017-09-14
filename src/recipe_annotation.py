@@ -63,13 +63,14 @@ class Recipe(object):
 
 class RecipeGroup(object):
 
-    def __init__(self, df, member_keys=set()):
+    def __init__(self, df, member_keys=set(), dists=None, embeded_2d=None):
         #assuming a DataFrame of %mass by ingred, plus label and total_wgt
         #member_keys are df indices of recipes in group
         self.member_keys = set(member_keys)
         self.df = df
         self.create_members()
-        self.dists = None
+        self.dists = dists
+        self.embeded_2d = embeded_2d
 
     def get_dists(self, ratio):
         """
@@ -124,11 +125,12 @@ class RecipeGroup(object):
             self.member_keys.add(self.df.index[max_dists.argmin()])
         self.create_members()
 
-    def show_tnse_plot(self, **kwargs):
+    def show_tsne_plot(self, **kwargs):
         tsne = TSNE(perplexity=30, learning_rate=100.0, metric='precomputed')
         if self.dists is None:
             self.get_dists(kwargs.get('ratio',0.5))
-        self.embeded_2d = tsne.fit_transform(self.dists)
+        if self.embeded_2d is None:
+            self.embeded_2d = tsne.fit_transform(self.dists)
         self.group_mask = self.df.index.isin(self.member_keys).astype(int)
         colors = np.array(['b', 'r'])[self.group_mask]
         plt.scatter(self.embeded_2d[:,0], self.embeded_2d[:,1], alpha=0.5, c=colors)
