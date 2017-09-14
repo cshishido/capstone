@@ -45,7 +45,7 @@ def get_recipe_features(recipe_dict, precedence_dict):
                 {'label': recipe_dict['label'].lower(),
                 'total_wgt': tot,
                 'url': recipe_dict['url'],
-                'health': recipe_dict['healthLabels']
+                'health': recipe_dict['healthLabels'],
                 'line_text': '\n'.join(recipe_dict['ingredientLines'])})
     for ingred_line in recipe_dict['ingredients']:
         ingred = identify_ingred(ingred_line, precedence_dict, from_url=recipe_dict['url'])
@@ -73,7 +73,7 @@ def mean_scale_recipes(df):
     drop label and total_wgt for compatibility with pair-wise dists compuation
     """
     try:
-        df = df.drop(['label', 'total_wgt', 'line_text', 'healthLabels'], axis=1)
+        df = df.drop(['label', 'total_wgt', 'line_text', 'health'], axis=1)
     except ValueError:
         warn("label and total_wgt columns are not in df")
     return df/(df.sum(axis=0)/(df>0).sum(axis=0))

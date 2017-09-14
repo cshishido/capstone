@@ -10,7 +10,7 @@ class Recipe(object):
         self.label = recipe_features.pop('label')
         self.total_wgt = recipe_features.pop('total_wgt')
         self.line_text = recipe_features.pop('line_text')
-        self.health = recipe_features.pop('healthLabels')
+        self.health = recipe_features.pop('health')
         self.per_mass = {i: m for i, m in recipe_features.iteritems() if m > 0}
         self.group = group
         self.key = key
@@ -114,10 +114,15 @@ class RecipeGroup(object):
         self.member_keys.update(self.df.index[neighbors_d.argsort()[0:group_size]])
         self.create_members()
 
-
-    # def grow_by_linkage(group_size):
-    #     while len(member_keys) > group_size:
-    #
+    def grow_by_linkage(self, group_size, **kwargs):
+        if self.dists is None:
+            self.get_dists(kwargs.get('ratio',0.5))
+        while len(self.member_keys) < group_size:
+            member_idx = self.df.index.isin(self.member_keys)
+            max_dists = self.dists[member_idx].max(axis=0)
+            max_dists[member_idx] = 1
+            self.member_keys.add(self.df.index[max_dists.argmin()])
+        self.create_members()
 
     def show_tnse_plot(self, **kwargs):
         tsne = TSNE(perplexity=30, learning_rate=100.0, metric='precomputed')
@@ -139,7 +144,7 @@ class RecipeGroup(object):
                                         key=lambda item: item[1]['freq'],
                                         reverse=True):
             freq = stat_dict['freq']
-            if freq < thresholds[-1][0]:
+            if freq <= thresholds[-1][0]:
                 ingred_lines.append('{} ingredients:'.format(thresholds.pop()[1]))
             ingred_lines.append('   {}, in {:4.1f}%  of recipes'.format(ingred, freq*100))
         self.desc = '\n'.join(ingred_lines[:24])
@@ -148,12 +153,12 @@ class RecipeGroup(object):
         self._get_group_description()
         return self.desc
 
-    def find_typical_recipe(self, freq_cos_ratio=0.5):
+    def find_typical_recipe(self, freq_cos_ratio=0.5, health_labels=[]):
         best_recp = None
         best_score = 0
         for recipe in self.members.itervalues():
             score = recipe.get_typicality_score(freq_cos_ratio  )
-            if score > best_score:
+            if score > best_score and np.all(np.isin(health_labels, recipe.health)):
                 best_score = score
                 best_recp = recipe
         return best_recp
