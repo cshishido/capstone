@@ -23,7 +23,7 @@ class Recipe(object):
     #     self.group.member_keys.add(self.key)
     #     self.group.get_stats()
 
-    def _get_annotations(self):
+    def get_annotations(self):
         """
         creates self.annots atribute, joinable lines of recipe ingreds
         """
@@ -46,9 +46,10 @@ class Recipe(object):
             ))
             lines.append("-"*60)
         self.annots = "\n".join(lines)
+        return self.annots
 
     def __str__(self):
-        self._get_annotations()
+        self.get_annotations()
         return self.annots
 
     def get_typicality_score(self, freq_cos_ratio= 0.5):
@@ -136,7 +137,7 @@ class RecipeGroup(object):
         plt.scatter(self.embeded_2d[:,0], self.embeded_2d[:,1], alpha=0.5, c=colors)
         plt.show()
 
-    def _get_group_description(self):
+    def get_group_description(self):
         ingred_lines = []
         thresholds = [(0, None),
                       (.10, 'uncommon'),
@@ -150,9 +151,10 @@ class RecipeGroup(object):
                 ingred_lines.append('{} ingredients:'.format(thresholds.pop()[1]))
             ingred_lines.append('   {}, in {:4.1f}%  of recipes'.format(ingred, freq*100))
         self.desc = '\n'.join(ingred_lines[:24])
+        return self.desc
 
     def __str__(self):
-        self._get_group_description()
+        self.get_group_description()
         return self.desc
 
     def find_typical_recipe(self, freq_cos_ratio=0.5, health_labels=[]):

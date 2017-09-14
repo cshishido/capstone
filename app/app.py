@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import re
 import numpy as np
@@ -35,10 +35,19 @@ def results_from_label:
 def results_from_example:
     user_data = request.json
     recp_group = RecipeGroup(df_cookies, {user_data['in_url']}, dists=dists, embeded_2d=embeded_2d)
+    return output_json(recp_group)
 
 def output_json(recp_group):
-    group_size = len(recp_group.member_keys)
-    group_desc = recp_group.get_d
+    typ_recp = recp_group.find_typical_recipe()
+    output = {
+    'group_size' = len(recp_group.member_keys)
+    'group_desc' = recp_group.get_group_description()
+    'recp_label' = typ_recp.label
+    'recp_url' = typ_recp.key
+    'recp_text' = typ_recp.line_text
+    'recp_stat' = typ_recp.get_annotations()
+    }
+    return jsonify(output)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
