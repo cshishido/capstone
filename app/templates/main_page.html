@@ -1,0 +1,80 @@
+<html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<head>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.js') }}">
+    </script>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='app.js') }}">
+    </script>
+    <style>
+    p { white-space: pre-wrap;      }
+    body {
+        padding-top: 54px;
+        background-image: url('../static/baking_01.jpg');
+        background-size: cover;
+    }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="display-1 text-white">Recipe Helper</h1>
+        <h2 class="display-4 text-white">Find the ingredients that make the dish</h2>
+    </div>
+    <div>
+        <p>Start with a dish name:</p>
+        <span>label:</span><input id="label_in"></input>
+        <button type="button" id="submit_label">Explore</button>
+    </div>
+
+    <div>
+        <p>Start with an example:</p>
+        <span>url:</span><input id="url_in"></input>
+        <button type="button" id="submit_url">Explore</button>
+    </div>
+    <fieldset>
+        <legend>Dietary restrictions</legend>
+        <div>
+            <input type="checkbox" id="Gluten-Free" class="health" value="Gluten-Free">
+            <label for="">Gluten free</label>
+        </div>
+        <div>
+            <input type="checkbox" id="Peanut-Free" class="health" value="Peanut-Free">
+            <label for="">Peanut free</label>
+        </div>
+        <div>
+            <input type="checkbox" id="Soy-Free" class="health" value="Soy-Free">
+            <label for="">Soy free</label>
+        </div>
+        <div>
+            <input type="checkbox" id="Vegetarian" class="health" value="Vegetarian">
+            <label for="">Vegetarian</label>
+        </div>
+        <div>
+            <input type="checkbox" id="Vegan" class="health" value="Vegan">
+            <label for="">Vegan</label>
+        </div>
+    </fieldset>
+
+    <div id="report" style="display:none">
+        <div id="group_info">
+            <h3>Comparing <span id="group_size"></span> similar recipes:</h3>
+            <p id=group_desc> id="group_desc"></p>
+        </div>
+
+        <div id="example_recp">
+            <h2>This seems like a baseline example of this dish, with your diet constraints:
+                <a id="recp_url"><span id="recp_label"></span></a>
+            </h2>
+            <p>Original text:</p>
+            <p id="recp_text"></p>
+
+            <p>Breakdown by ingredient:</p>
+            <p id="recp_stats"></p>
+        </div>
+
+    </div>
+</body>

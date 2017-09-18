@@ -136,7 +136,7 @@ class RecipeGroup(object):
         colors = np.array(['b', 'r'])[self.group_mask]
         plt.scatter(self.embeded_2d[:,0], self.embeded_2d[:,1], alpha=0.5, c=colors)
         plt.show()
-
+        
     def get_group_description(self):
         ingred_lines = []
         thresholds = [(0, None),

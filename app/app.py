@@ -22,30 +22,33 @@ embeded_2d = TSNE(learning_rate=200, metric='precomputed').fit_transform(dists)
 def main_page():
     return render_template('main_page.html')
 
-@app.route('/result_label', methods=['POST']):
-def results_from_label:
+@app.route('/result_label', methods=['POST'])
+def results_from_label():
     user_data = request.json
-    lbl_regx = ".".joing(user_data['in_label'].split())
+    lbl_regx = ".".join(user_data['label_in'].split())
     grp_keys = df_cookies.index[df_cookies.label.str.contains(lbl_regx, case=False, regex=True)]
     recp_group = RecipeGroup(df_cookies, grp_keys, dists=dists, embeded_2d=embeded_2d)
-    return output_json(recp_group)
+    return output_json(recp_group, user_data['health_flags'])
 
 
-@app.route('/result_url', methods=['POST']):
-def results_from_example:
+@app.route('/result_url', methods=['POST'])
+def results_from_example():
     user_data = request.json
-    recp_group = RecipeGroup(df_cookies, {user_data['in_url']}, dists=dists, embeded_2d=embeded_2d)
-    return output_json(recp_group)
+    print user_data['url_in']
+    recp_group = RecipeGroup(df_cookies, {user_data['url_in']}, dists=dists, embeded_2d=embeded_2d)
+    recp_group.grow_by_linkage(group_size=100)
+    return output_json(recp_group, user_data['health_flags'])
 
-def output_json(recp_group):
-    typ_recp = recp_group.find_typical_recipe()
+def output_json(recp_group, health_labels):
+    typ_recp = recp_group.find_typical_recipe(health_labels=health_labels)
     output = {
-    'group_size' = len(recp_group.member_keys)
-    'group_desc' = recp_group.get_group_description()
-    'recp_label' = typ_recp.label
-    'recp_url' = typ_recp.key
-    'recp_text' = typ_recp.line_text
-    'recp_stat' = typ_recp.get_annotations()
+    'group_size' : len(recp_group.member_keys),
+    'group_desc' : recp_group.get_group_description(),
+    'recp_label' : typ_recp.label,
+    'recp_url' : typ_recp.key,
+    'recp_text' : typ_recp.line_text,
+    'recp_stats' : typ_recp.get_annotations(),
+    'health_flags': health_labels
     }
     return jsonify(output)
 
