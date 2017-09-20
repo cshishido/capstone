@@ -9,45 +9,35 @@
             src="{{ url_for('static', filename='app.js') }}">
     </script>
     <style>
-    p { white-space: pre-wrap;
-        background-color: rgba(0, 0, 0, .7);
-        color: white;}
+    p { white-space: pre-wrap;}
     body {
         padding-top: 54px;
         background-image: url('../static/baking_01.jpg');
         background-size: cover;}
-    .container {background-color: rgba(0, 0, 0, .7);
+    .container {background-color: rgba(0, 0, 0, .84);
                 color: white;}
     </style>
 
 </head>
 
 <body>
-    <!-- <div class="masthead"> -->
-        <!-- <div class="align-items-center"> -->
-        <!-- <div class="overlay"> -->
-            <div class="container">
-                <h1 class="display-1 text-white">Recipe Helper</h1>
-                <h2 class="display-4 text-white">Find the ingredients that make the dish</h2>
-            </div>
-        <!-- </div> -->
-        <!-- </div> -->
-    <!-- </div> -->
-    <div class="section">
     <div class="container">
+        <h1 class="display-1 text-white">Recipe Helper</h1>
+        <h2 class="display-4 text-white">Find the ingredients that make the dish</h2>
+    </div>
+    <div class="container">
+    <div class="row">
         <div class="col-md-6 order-1">
             <p>Start with a dish name:</p>
             <span>label:</span><input id="label_in"></input>
             <button type="button" id="submit_label">Explore</button>
         </div>
 
-        <div class="col-md-6 order-2">
+        <!-- <div class="col-md-6 order-2">
             <p>Start with an example:</p>
             <span>url:</span><input id="url_in"></input>
             <button type="button" id="submit_url">Explore</button>
-        </div>
-
-
+        </div> -->
     <fieldset>
         <legend>Dietary restrictions</legend>
         <div>
@@ -74,22 +64,26 @@
     </div>
     </div>
 
+
     <div id="report" style="display:none">
-        <div id="group_info">
-            <h3>Comparing <span id="group_size"></span> similar recipes:</h3>
-            <p id=group_desc> id="group_desc"></p>
+        <div style="margin-top:20px"></div>
+        <div class=container>
+        <div class="row mt-200">
+            <div id="example_recp" class="col-md-7 order-1">
+                <h2>This seems like a baseline example of this dish, with your diet constraints:
+                    <a id="recp_url"><span id="recp_label"></span></a>
+                </h2>
+                <p>Original text:</p>
+                <p id="recp_text"></p>
+
+                <p>Breakdown by ingredient:</p>
+                <p id="recp_stats" style="font-family:courier;"></p>
+            </div>
+            <div id="group_info" class="col-md-5 order-2">
+                <h3>Comparing <span id="group_size"></span> similar recipes:</h3>
+                <p id=group_desc> id="group_desc"></p>
+            </div>
         </div>
-
-        <div id="example_recp">
-            <h2>This seems like a baseline example of this dish, with your diet constraints:
-                <a id="recp_url"><span id="recp_label"></span></a>
-            </h2>
-            <p>Original text:</p>
-            <p id="recp_text"></p>
-
-            <p>Breakdown by ingredient:</p>
-            <p id="recp_stats"></p>
         </div>
-
     </div>
 </body>

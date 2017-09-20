@@ -27,18 +27,18 @@ class Recipe(object):
         """
         creates self.annots atribute, joinable lines of recipe ingreds
         """
-        lines = []
+        lines = ["-"*60]
         for ingred in sorted(self.per_mass,
             key=(lambda ingred: self.group.stats[ingred]['freq']),
             reverse=True):
             stats = self.group.stats[ingred]
             lines.append(
-            "{:16}  |   used in {:3.1f}%  of recipes|".format(
+            "{:22}     used in {:3.1f}%  of recipes".format(
             ingred.upper() + ": {:4.1f}g".format(self.per_mass[ingred] * self.total_wgt),
             stats['freq']*100
             ))
             lines.append(
-            "     avg: {:5.1f}g  | range: {:4.1f}g - {:4.1f}g       |  std: {:6.4f}g".format(
+            "avg: {:5.1f}g  ~~~  range: {:4.1f}g - {:4.1f}g  ~~~  std: {:6.4f}g".format(
                 stats['avg']*self.total_wgt,
                 stats['min']*self.total_wgt,
                 stats['max']*self.total_wgt,
@@ -136,7 +136,7 @@ class RecipeGroup(object):
         colors = np.array(['b', 'r'])[self.group_mask]
         plt.scatter(self.embeded_2d[:,0], self.embeded_2d[:,1], alpha=0.5, c=colors)
         plt.show()
-        
+
     def get_group_description(self):
         ingred_lines = []
         thresholds = [(0, None),
