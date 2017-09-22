@@ -1,6 +1,8 @@
+*.log
 notes.txt
 *.ipynbc
 practice.ipynb
 *.pyc
 clustering_lectures/
 dimensionality_lectures/
+*list.txt
